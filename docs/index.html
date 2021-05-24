@@ -1,37 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flayppy Bird</title>
+    <style>
+      *,
+      ::after,
+      ::before {
+        box-sizing: inherit;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
+      :focus {
+        outline: 0 none;
+      }
+      html {
+        box-sizing: border-box;
+        height: 100vh;
+        scroll-behavior: smooth;
+      }
+      body,
+      html {
+        -webkit-overflow-scrolling: touch;
+        user-select: none;
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        font-family: system-ui, sans-serif;
+      }
+      #canvas {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
 
-<head>
-  <title></title>
-  <style>
-    * {
-      margin: 0;
-      border: 0;
-      font-size: 36px;
-    }
-    .nice {
-      display: flex;
-      justify-content:center;
-      align-items: center;
-      font-size: 36px;
-    }
-    input {
-      margin: 0 10px;
-      font-size: 36px;
-      width: 100px;
-      border: 2px solid rgb(58, 58, 58);
-    }
-    button {
-      margin: 0 10px;
-      border: 2px solid rgb(58, 58, 58);
-    }
-  </style>
-</head>
-
-<body>
-  <canvas width="750" height="1000" id="canvas" style="width: 100%"></canvas>
-  <script src="//cdn.bootcdn.net/ajax/libs/eventemitter3/3.1.2/index.min.js"></script>
-  <script src="./main.js"></script>
-</body>
-
+  <body>
+    <canvas id="canvas"></canvas>
+    <script src="//cdn.bootcdn.net/ajax/libs/eventemitter3/3.1.2/index.min.js"></script>
+    <script src="./main.js"></script>
+  </body>
 </html>

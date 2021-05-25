@@ -7,19 +7,18 @@ import createBird from './gameObjects/bird'
 // import createBtn from './gameObjects/btn'
 import resources from './resources'
 
-import { Game, resource } from '@eva/eva.js'
+import { Game, GameObject, resource } from '@eva/eva.js'
 import { RendererSystem } from '@eva/plugin-renderer'
 import { ImgSystem } from '@eva/plugin-renderer-img'
-import { EventSystem } from '@eva/plugin-renderer-event'
+import { Event, EventSystem, HIT_AREA_TYPE } from '@eva/plugin-renderer-event'
 import { SpriteAnimationSystem } from '@eva/plugin-renderer-sprite-animation'
 import { RenderSystem } from '@eva/plugin-renderer-render'
 import { TransitionSystem } from '@eva/plugin-transition'
 import { GraphicsSystem } from '@eva/plugin-renderer-graphics'
 import { TextSystem } from '@eva/plugin-renderer-text'
 import { SpriteSystem } from '@eva/plugin-renderer-sprite'
-import {
-  TilingSpriteSystem,
-} from '@eva/plugin-renderer-tiling-sprite'
+import { TilingSpriteSystem } from '@eva/plugin-renderer-tiling-sprite'
+import { PhysicsSystem, Physics, PhysicsType } from '@eva/plugin-matterjs'
 
 resource.addResource(resources)
 
@@ -30,7 +29,7 @@ const sceneWidth = 750
 const sceneHeight = (canvasHeight / canvasWidth) * 750
 
 const game = new Game({
-  frameRate: 60,
+  frameRate: 70, // 兼容Eva自身bug, 帧率必须大于60
   // autoStart: false,
   systems: [
     new RendererSystem({
@@ -38,7 +37,7 @@ const game = new Game({
       width: sceneWidth,
       height: sceneHeight,
       transparent: true,
-      resoution: 0.5,
+      resolution: window.devicePixelRatio / 2,
     }),
     new ImgSystem(),
     new TransitionSystem(),
@@ -47,6 +46,18 @@ const game = new Game({
     new RenderSystem(),
     new EventSystem(),
     new GraphicsSystem(),
+    new PhysicsSystem({
+      resolution: window.devicePixelRatio / 2,
+      // isTest: true, // 是否开启调试模式
+      // element: document.getElementById('game-container'), // 调试模式下canvas节点的挂载点
+      // isTest: true, // 是否开启调试模式
+      // element: document.getElementById('container'), // 调试模式下canvas节点的挂载点
+      world: {
+        gravity: {
+          y: 5, // 重力
+        },
+      },
+    }),
     new TextSystem(),
     new TilingSpriteSystem(),
   ],
@@ -55,42 +66,41 @@ const game = new Game({
 game.scene.transform.size.width = sceneWidth
 game.scene.transform.size.height = sceneHeight
 
-const pos = {
-  x: 500,
-  y: 1100,
-}
-
-const birdPosition = {
+let readyPanelHidden = false
+let birdPosition = {
   x: 100,
   y: 660,
 }
 
+const background = createBackground(sceneWidth, sceneHeight, game)
 const readyPanel = createReadyPanel()
-const { bird } = createBird(birdPosition)
-// const ball = createBall(pos)
-// const { basetFront, playAnim } = createBasketFront()
-// const btn = createBtn({
-//   text: '投球',
-//   transform: {
-//     position: {
-//       x: 0,
-//       y: -120,
-//     },
-//     origin: {
-//       x: 0.5,
-//       y: 0.5,
-//     },
-//     anchor: {
-//       x: 0.5,
-//       y: 1,
-//     },
-//   },
-//   callback: () => {
-//     alert('还没做呢～一起来完善吧')
-//   },
-// })
-game.scene.addChild(createBackground(sceneWidth, sceneHeight, game))
+const { bird, updateBirdPosition, initBirdPysics } = createBird(birdPosition)
+
+const evt = background.addComponent(
+  new Event({
+    type: HIT_AREA_TYPE.Rect,
+  })
+)
+
+evt.on('tap', (e: TouchEvent) => {
+  const { x, y } = birdPosition
+
+  birdPosition = {
+    x: x,
+    y: y - 20,
+  }
+
+  updateBirdPosition(game, birdPosition)
+
+  if (!readyPanelHidden) {
+    readyPanelHidden = true
+    readyPanel.animation.play('hidden', 1)
+    initBirdPysics()
+  }
+})
+
+game.scene.addChild(background)
 game.scene.addChild(bird)
-game.scene.addChild(readyPanel)
+game.scene.addChild(readyPanel.readyBox)
 
 window.game = game

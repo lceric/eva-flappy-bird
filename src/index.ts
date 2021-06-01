@@ -1,13 +1,11 @@
 import createBackground from './gameObjects/background'
-import createReadyPanel from './gameObjects/ready/penel'
+import createReady from './gameObjects/ready/panel'
 import createBird from './gameObjects/bird'
-// import createBasketFront from './gameObjects/board/basketFront'
-// import createBoard from './gameObjects/board/board'
-// import createBall from './gameObjects/ball'
-// import createBtn from './gameObjects/btn'
+import createGameOver from './gameObjects/over/panel'
+
 import resources from './resources'
 
-import { Game, GameObject, resource } from '@eva/eva.js'
+import { Game, resource } from '@eva/eva.js'
 import { RendererSystem } from '@eva/plugin-renderer'
 import { ImgSystem } from '@eva/plugin-renderer-img'
 import { Event, EventSystem, HIT_AREA_TYPE } from '@eva/plugin-renderer-event'
@@ -18,7 +16,7 @@ import { GraphicsSystem } from '@eva/plugin-renderer-graphics'
 import { TextSystem } from '@eva/plugin-renderer-text'
 import { SpriteSystem } from '@eva/plugin-renderer-sprite'
 import { TilingSpriteSystem } from '@eva/plugin-renderer-tiling-sprite'
-import { PhysicsSystem, Physics, PhysicsType } from '@eva/plugin-matterjs'
+import { PhysicsSystem } from '@eva/plugin-matterjs'
 
 resource.addResource(resources)
 
@@ -46,6 +44,7 @@ const game = new Game({
     new RenderSystem(),
     new EventSystem(),
     new GraphicsSystem(),
+    new TilingSpriteSystem(),
     new PhysicsSystem({
       resolution: window.devicePixelRatio / 2,
       // isTest: true, // 是否开启调试模式
@@ -59,22 +58,28 @@ const game = new Game({
       },
     }),
     new TextSystem(),
-    new TilingSpriteSystem(),
   ],
 })
 
 game.scene.transform.size.width = sceneWidth
 game.scene.transform.size.height = sceneHeight
 
-let readyPanelHidden = false
-let birdPosition = {
+let readyHidden = false
+let gameStart = false
+let initedBirdPysics = false
+let initBirdPosition = {
   x: 100,
   y: 660,
 }
+let birdPosition = {
+  ...initBirdPosition,
+}
 
 const background = createBackground(sceneWidth, sceneHeight, game)
-const readyPanel = createReadyPanel()
-const { bird, updateBirdPosition, initBirdPysics } = createBird(birdPosition)
+const ready = createReady()
+const { bird, updateBirdPosition, initBirdPysics } =
+  createBird(initBirdPosition)
+const gameOver = createGameOver(game)
 
 const evt = background.addComponent(
   new Event({
@@ -85,22 +90,51 @@ const evt = background.addComponent(
 evt.on('tap', (e: TouchEvent) => {
   const { x, y } = birdPosition
 
-  birdPosition = {
-    x: x,
-    y: y - 20,
+  if (gameStart) {
+    birdPosition = {
+      x: x,
+      y: y - 20,
+    }
+
+    updateBirdPosition(game, birdPosition)
   }
+  gameStart = true
 
-  updateBirdPosition(game, birdPosition)
-
-  if (!readyPanelHidden) {
-    readyPanelHidden = true
-    readyPanel.animation.play('hidden', 1)
-    initBirdPysics()
+  if (!readyHidden) {
+    readyHidden = true
+    ready.animation.play('hidden', 1)
+    !initedBirdPysics && initBirdPysics()
+    initedBirdPysics = true
   }
 })
 
-game.scene.addChild(background)
-game.scene.addChild(bird)
-game.scene.addChild(readyPanel.readyBox)
+function initGameScene(game: Game) {
+  game.scene.addChild(background)
+  game.scene.addChild(bird)
+  game.scene.addChild(ready.readyBox)
+  game.scene.addChild(gameOver.gameOver)
+}
 
+game.on('on-game-start', (e) => {
+  birdPosition = {
+    ...initBirdPosition,
+  }
+  updateBirdPosition(game, birdPosition)
+  console.log(birdPosition)
+
+  gameOver.animation.play('hidden', 1)
+
+  readyHidden = false
+  ready.animation.play('show', 1)
+
+  console.log('game start', e)
+})
+
+game.on('on-game-over', (e) => {
+  gameStart = false
+  gameOver.animation.play('show', 1)
+  console.log('game over', e)
+})
+
+initGameScene(game)
 window.game = game

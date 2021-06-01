@@ -1,4 +1,5 @@
 import { Game, GameObject } from '@eva/eva.js'
+import { Physics, PhysicsType } from '@eva/plugin-matterjs'
 import { Img } from '@eva/plugin-renderer-img'
 import { TilingSprite } from '@eva/plugin-renderer-tiling-sprite'
 
@@ -26,18 +27,35 @@ export default function createBackground(
     })
   )
 
-  const ground = new GameObject('sprite', {
-    size: { width: sceneWidth, height: 300 },
-    position: { x: 0, y: sceneHeight - 300 },
+  const ground = new GameObject('ground', {
+    size: { width: sceneWidth, height: 280 },
+    position: { x: 0, y: sceneHeight - 280 },
+    anchor: {
+      x: 0,
+      y: 0.11,
+    },
+    origin: {
+      x: 0.5,
+      y: 0.5,
+    },
+    scale: { x: 2, y: 1 }, // 缩放比例
   })
 
   const groundTilingSprite = new TilingSprite({
     resource: 'ground',
-    tileScale: { x: 1, y: 1.1 },
+    tileScale: { x: 1, y: 1 },
     tilePosition: { x: 0, y: 0 },
   })
 
   ground.addComponent(groundTilingSprite)
+  ground.addComponent(
+    new Physics({
+      type: PhysicsType.RECTANGLE,
+      bodyOptions: {
+        isStatic: true,
+      },
+    })
+  )
 
   bg.addChild(ground)
 

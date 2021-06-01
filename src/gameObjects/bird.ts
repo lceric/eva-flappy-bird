@@ -35,27 +35,38 @@ export default function createBird(position: BirdPosition) {
     anim.resource = 'bird'
   }
 
+  const birdPhysics = new Physics({
+    type: PhysicsType.RECTANGLE,
+    bodyOptions: {
+      isStatic: false,
+      // restitution: 0.4,
+      // density: 0.002,
+    },
+  })
+
   function updateBirdPosition(game: any, pos: BirdPosition) {
     game.ticker.add(() => {
     })
-    bird.transform.position = pos
+    // bird.transform.position = { ...pos }
+    console.log(birdPhysics)
+    birdPhysics.body.position = pos
+    // birdPhysics.body.y = pos.y
   }
 
   function initBirdPysics() {
     const physics = bird.addComponent(
-      new Physics({
-        type: PhysicsType.RECTANGLE,
-        bodyOptions: {
-          isStatic: false,
-          // restitution: 0.4,
-          // density: 0.002,
-        },
-      })
+      birdPhysics
     )
 
-    physics.on('collisionStart', (body: GameObject, body1: GameObject, body2: GameObject) => {
-      console.log(body, body1, body2)
-    })
+    physics.on(
+      'collisionStart',
+      (body: GameObject, body1: GameObject, body2: GameObject) => {
+        console.log(body, body1, body2)
+        if (body.name == 'ground') {
+          window.game.emit('on-game-over')
+        }
+      }
+    )
   }
 
   return { bird, playAnim, updateBirdPosition, initBirdPysics }

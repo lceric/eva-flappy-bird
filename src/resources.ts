@@ -54,4 +54,21 @@ export default [
     },
     preload: true,
   },
+  {
+    name: 'over',
+    type: RESOURCE_TYPE.SPRITE,
+    src: {
+      image: {
+        type: 'png',
+        url:
+          './statics/over/over.png',
+      },
+      json: {
+        type: 'json',
+        url:
+          './statics/over/over.json',
+      },
+    },
+    preload: true,
+  },
 ]

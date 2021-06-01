@@ -1,12 +1,11 @@
 import { GameObject } from '@eva/eva.js'
-import { Img } from '@eva/plugin-renderer-img'
 import { Transition } from '@eva/plugin-transition'
 import { Render } from '@eva/plugin-renderer-render'
 import createTitle from './title'
 import createTap from './tap'
 // import createBird from '../bird'
 
-export default function createReadyScene(): {
+export default function createReady(): {
   readyBox: any
   animation: any
 } {
@@ -42,6 +41,24 @@ export default function createReadyScene(): {
           {
             time: 20,
             value: 0,
+            tween: 'linear',
+          },
+        ],
+      },
+    ],
+    show: [
+      {
+        name: 'alpha',
+        component: render,
+        values: [
+          {
+            time: 0,
+            value: 0,
+            tween: 'linear',
+          },
+          {
+            time: 20,
+            value: 1,
             tween: 'linear',
           },
         ],

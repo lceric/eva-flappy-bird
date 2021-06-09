@@ -77,7 +77,7 @@ let birdPosition = {
 
 const background = createBackground(sceneWidth, sceneHeight, game)
 const ready = createReady()
-const { bird, updateBirdPosition, initBirdPysics } =
+const { bird, updateBirdPosition, initBirdPysics, jump } =
   createBird(initBirdPosition)
 const gameOver = createGameOver(game)
 
@@ -91,12 +91,13 @@ evt.on('tap', (e: TouchEvent) => {
   const { x, y } = birdPosition
 
   if (gameStart) {
-    birdPosition = {
-      x: x,
-      y: y - 20,
-    }
+    // birdPosition = {
+    //   x: x,
+    //   y: y - 20,
+    // }
 
-    updateBirdPosition(game, birdPosition)
+    // updateBirdPosition(game, birdPosition)
+    jump()
   }
   gameStart = true
 

@@ -39,24 +39,33 @@ export default function createBird(position: BirdPosition) {
     type: PhysicsType.RECTANGLE,
     bodyOptions: {
       isStatic: false,
-      // restitution: 0.4,
-      // density: 0.002,
+      // restitution: 0,
+      frictionAir: 0.1,
+      friction: 0.06,
+      frictionStatic: 0.3,
+      force: {
+        x: 0,
+        y: 0,
+      },
+      // stopRotation: true,
     },
   })
 
   function updateBirdPosition(game: any, pos: BirdPosition) {
     game.ticker.add(() => {
+      bird.transform.position = { ...pos }
     })
-    // bird.transform.position = { ...pos }
-    console.log(birdPhysics)
-    birdPhysics.body.position = pos
+    // console.log(birdPhysics)
+    // birdPhysics.body.position = pos
     // birdPhysics.body.y = pos.y
   }
 
+  function jump() {
+    birdPhysics.body.force.y = -0.6
+  }
+
   function initBirdPysics() {
-    const physics = bird.addComponent(
-      birdPhysics
-    )
+    const physics = bird.addComponent(birdPhysics)
 
     physics.on(
       'collisionStart',
@@ -69,5 +78,5 @@ export default function createBird(position: BirdPosition) {
     )
   }
 
-  return { bird, playAnim, updateBirdPosition, initBirdPysics }
+  return { bird, playAnim, updateBirdPosition, initBirdPysics, jump }
 }

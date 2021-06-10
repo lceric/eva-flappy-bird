@@ -25,7 +25,7 @@ export default function createPlay(game: Game) {
   )
 
   evt.on('tap', () => {
-    game.emit('on-game-start')
+    game.emit('on-game-ready')
   })
 
   return play

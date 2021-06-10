@@ -2,6 +2,7 @@ import createBackground from './gameObjects/background'
 import createReady from './gameObjects/ready/panel'
 import createBird from './gameObjects/bird'
 import createGameOver from './gameObjects/over/panel'
+import createBars from './gameObjects/bars'
 
 import resources from './resources'
 
@@ -24,7 +25,8 @@ const canvasEl: HTMLElement = document.querySelector('#canvas')
 const canvasWidth = canvasEl.offsetWidth
 const canvasHeight = canvasEl.offsetHeight
 const sceneWidth = 750
-const sceneHeight = (canvasHeight / canvasWidth) * 750
+const sceneHeight = 750 * (window.innerHeight / window.innerWidth)
+// (canvasHeight / canvasWidth) * 750
 
 const game = new Game({
   frameRate: 70, // 兼容Eva自身bug, 帧率必须大于60
@@ -87,36 +89,16 @@ const evt = background.addComponent(
   })
 )
 
-evt.on('tap', (e: TouchEvent) => {
-  const { x, y } = birdPosition
-
+evt.on('tap', () => {
   if (gameStart) {
-    // birdPosition = {
-    //   x: x,
-    //   y: y - 20,
-    // }
-
-    // updateBirdPosition(game, birdPosition)
-    jump()
+    return jump()
   }
   gameStart = true
 
-  if (!readyHidden) {
-    readyHidden = true
-    ready.animation.play('hidden', 1)
-    !initedBirdPysics && initBirdPysics()
-    initedBirdPysics = true
-  }
+  game.emit('on-game-start')
 })
 
-function initGameScene(game: Game) {
-  game.scene.addChild(background)
-  game.scene.addChild(bird)
-  game.scene.addChild(ready.readyBox)
-  game.scene.addChild(gameOver.gameOver)
-}
-
-game.on('on-game-start', (e) => {
+game.on('on-game-ready', (e) => {
   birdPosition = {
     ...initBirdPosition,
   }
@@ -128,7 +110,20 @@ game.on('on-game-start', (e) => {
   readyHidden = false
   ready.animation.play('show', 1)
 
-  console.log('game start', e)
+  console.log('game ready', e)
+})
+
+game.on('on-game-start', (e) => {
+  if (!readyHidden) {
+    readyHidden = true
+    ready.animation.play('hidden', 1)
+    !initedBirdPysics && initBirdPysics()
+    initedBirdPysics = true
+
+
+    const bars = createBars(sceneWidth, sceneHeight, game)
+    game.scene.addChild(bars)
+  }
 })
 
 game.on('on-game-over', (e) => {
@@ -139,3 +134,12 @@ game.on('on-game-over', (e) => {
 
 initGameScene(game)
 window.game = game
+
+function initGameScene(game: Game) {
+  game.scene.addChild(background)
+  game.scene.addChild(bird)
+  game.scene.addChild(ready.readyBox)
+  game.scene.addChild(gameOver.gameOver)
+  // const bars = createBars(sceneWidth, sceneHeight, game)
+  // game.scene.addChild(bars)
+}

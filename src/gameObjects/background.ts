@@ -28,17 +28,17 @@ export default function createBackground(
   )
 
   const ground = new GameObject('ground', {
-    size: { width: sceneWidth, height: 280 },
-    position: { x: 0, y: sceneHeight - 280 },
+    size: { width: sceneWidth * 2, height: 560 },
+    position: { x: 0, y: 0 },
     anchor: {
       x: 0,
-      y: 0.11,
+      y: 1,
     },
     origin: {
       x: 0.5,
       y: 0.5,
     },
-    scale: { x: 2, y: 1 }, // 缩放比例
+    scale: { x: 1, y: 1 }, // 缩放比例
   })
 
   const groundTilingSprite = new TilingSprite({

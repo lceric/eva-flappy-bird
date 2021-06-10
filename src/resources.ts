@@ -12,6 +12,17 @@ export default [
     preload: true,
   },
   {
+    name: 'blue',
+    type: RESOURCE_TYPE.IMAGE,
+    src: {
+      image: {
+        type: 'png',
+        url: 'https://gw.alicdn.com/tfs/TB11hpw1kY2gK0jSZFgXXc5OFXa-200-200.png',
+      },
+    },
+    preload: true,
+  },
+  {
     name: 'ground',
     type: RESOURCE_TYPE.IMAGE,
     src: {
@@ -67,6 +78,23 @@ export default [
         type: 'json',
         url:
           './statics/over/over.json',
+      },
+    },
+    preload: true,
+  },
+  {
+    name: 'bar',
+    type: RESOURCE_TYPE.SPRITE,
+    src: {
+      image: {
+        type: 'png',
+        url:
+          './statics/bar/bar.png',
+      },
+      json: {
+        type: 'json',
+        url:
+          './statics/bar/bar.json',
       },
     },
     preload: true,

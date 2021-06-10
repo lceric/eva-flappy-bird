@@ -55,9 +55,6 @@ export default function createBird(position: BirdPosition) {
     game.ticker.add(() => {
       bird.transform.position = { ...pos }
     })
-    // console.log(birdPhysics)
-    // birdPhysics.body.position = pos
-    // birdPhysics.body.y = pos.y
   }
 
   function jump() {
@@ -67,15 +64,12 @@ export default function createBird(position: BirdPosition) {
   function initBirdPysics() {
     const physics = bird.addComponent(birdPhysics)
 
-    physics.on(
-      'collisionStart',
-      (body: GameObject, body1: GameObject, body2: GameObject) => {
-        console.log(body, body1, body2)
-        if (body.name == 'ground') {
-          window.game.emit('on-game-over')
-        }
+    physics.on('collisionStart', (body: GameObject, body1: GameObject) => {
+      console.log(body, body1)
+      if (body.name == 'ground') {
+        window.game.emit('on-game-over')
       }
-    )
+    })
   }
 
   return { bird, playAnim, updateBirdPosition, initBirdPysics, jump }

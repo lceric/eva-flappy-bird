@@ -113,7 +113,11 @@ game.on('on-game-ready', (e) => {
     ...initBirdPosition,
   }
   birdInstance.setPosition(birdPosition)
-  console.log(birdPosition)
+
+  if (initedBirdPysics) {
+    birdInstance.bird.removeComponent(birdInstance.birdPhysics)
+    initedBirdPysics = false
+  }
 
   gameOver.animation.play('hidden', 1)
 

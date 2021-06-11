@@ -40,7 +40,7 @@ export default class {
     this.game = game
   }
 
-  initBars() {
+  init() {
     const { sceneWidth, sceneHeight } = this
     const bars = new GameObject('bars', {
       size: { width: sceneWidth, height: sceneHeight - 280 },
@@ -59,7 +59,7 @@ export default class {
     //     resource: 'blue',
     //   })
     // )
-    this.renderBars()
+    this.create()
     return bars
   }
 
@@ -73,11 +73,14 @@ export default class {
 
   destroy() {
     this.moving = false
+    // removePhysics(this.currTopBar)
+    // removePhysics(this.currBottomBar)
+
     this.bars.removeChild(this.currTopBar)
     this.bars.removeChild(this.currBottomBar)
   }
 
-  renderBars() {
+  create() {
     const { sceneWidth, sceneHeight } = this
     const containerHeight = sceneHeight * 2 - 560
     const height = (containerHeight - 1000) / 2
@@ -86,23 +89,25 @@ export default class {
       height: containerHeight,
     }
 
-    const barAtTop = barCreator('BarFaceTop', 'top', height, container)
-    const barAtBottom = barCreator('BarFaceBottom', 'bottom', height, container)
+    const barAtTop = createBar('BarFaceTop', 'top', height, container)
+    const barAtBottom = createBar('BarFaceBottom', 'bottom', height, container)
 
     this.currTopBar = barAtTop
     this.currBottomBar = barAtBottom
 
     this.game.ticker.add((e: any) => {
-      if (this.moving) {
+      if (barAtTop && barAtBottom && this.moving) {
         removePhysics(barAtTop)
         removePhysics(barAtBottom)
+
         barAtTop.transform.position.x -= 1
         barAtBottom.transform.position.x -= 1
+
         addPhysics(barAtTop)
         addPhysics(barAtBottom)
-        console.log(barAtTop.transform.position.x)
       }
     })
+
     this.bars.addChild(barAtTop)
     this.bars.addChild(barAtBottom)
   }
@@ -126,7 +131,7 @@ function getRawPosition(
   return rawPosition[pos]
 }
 
-function barCreator(
+function createBar(
   name: string,
   pos: BarPosEnum,
   height: number,
@@ -185,6 +190,7 @@ function addPhysics(gameObj: GameObject) {
     })
   )
 }
+
 function removePhysics(gameObj: GameObject) {
   const p = gameObj.getComponent(Physics)
   if (p) {

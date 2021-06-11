@@ -139,8 +139,8 @@ game.on('on-game-start', (e) => {
     console.log(birdInstance)
     initedBirdPysics = true
 
-    const bars = barsInstance.initBars()
-    game.scene.addChild(bars)
+    barsInstance.init()
+    game.scene.addChild(barsInstance.bars)
     barsInstance.play()
 
     gameState.playing = true

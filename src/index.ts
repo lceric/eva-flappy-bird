@@ -1,6 +1,6 @@
 import createBackground from './gameObjects/background'
 import createReady from './gameObjects/ready/panel'
-import createBird from './gameObjects/bird'
+import Bird from './gameObjects/bird'
 import createGameOver from './gameObjects/over/panel'
 import Bars from './gameObjects/bars'
 
@@ -66,8 +66,13 @@ const game = new Game({
 game.scene.transform.size.width = sceneWidth
 game.scene.transform.size.height = sceneHeight
 
+const gameState = {
+  ready: true,
+  playing: false,
+  over: false,
+}
+
 let readyHidden = false
-let gameStart = false
 let initedBirdPysics = false
 let initBirdPosition = {
   x: 100,
@@ -79,10 +84,11 @@ let birdPosition = {
 
 const background = createBackground(sceneWidth, sceneHeight, game)
 const ready = createReady()
-const { bird, updateBirdPosition, initBirdPysics, jump } =
-  createBird(initBirdPosition)
 const gameOver = createGameOver(game)
 const barsInstance = new Bars(sceneWidth, sceneHeight, game)
+const birdInstance = new Bird()
+
+birdInstance.init(initBirdPosition)
 
 const evt = background.addComponent(
   new Event({
@@ -91,10 +97,10 @@ const evt = background.addComponent(
 )
 
 evt.on('tap', () => {
-  if (gameStart) {
-    return jump()
+  if (gameState.over) return
+  if (gameState.playing) {
+    return birdInstance.jump()
   }
-  gameStart = true
   game.emit('on-game-start')
 })
 
@@ -102,7 +108,7 @@ game.on('on-game-ready', (e) => {
   birdPosition = {
     ...initBirdPosition,
   }
-  updateBirdPosition(game, birdPosition)
+  birdInstance.setPosition(birdPosition)
   console.log(birdPosition)
 
   gameOver.animation.play('hidden', 1)
@@ -115,9 +121,14 @@ game.on('on-game-ready', (e) => {
 
 game.on('on-game-start', (e) => {
   if (!readyHidden) {
+    gameState.ready = false
+    gameState.playing = true
+    gameState.over = false
+
     readyHidden = true
     ready.animation.play('hidden', 1)
-    !initedBirdPysics && initBirdPysics()
+    !initedBirdPysics && birdInstance.initPhysics()
+    console.log(birdInstance)
     initedBirdPysics = true
 
     const bars = barsInstance.initBars()
@@ -127,9 +138,13 @@ game.on('on-game-start', (e) => {
 })
 
 game.on('on-game-over', (e) => {
-  gameStart = false
+  gameState.ready = false
+  gameState.playing = false
+  gameState.over = true
+
   gameOver.animation.play('show', 1)
   barsInstance.pause()
+
   console.log('game over', e)
 })
 
@@ -138,7 +153,7 @@ window.game = game
 
 function initGameScene(game: Game) {
   game.scene.addChild(background)
-  game.scene.addChild(bird)
+  game.scene.addChild(birdInstance.bird)
   game.scene.addChild(ready.readyBox)
   game.scene.addChild(gameOver.gameOver)
   // const bars = createBars(sceneWidth, sceneHeight, game)

@@ -7,62 +7,70 @@ interface BirdPosition {
   y: number
 }
 
-export default function createBird(position: BirdPosition) {
-  const bird = new GameObject('bird', {
-    size: {
-      width: 86,
-      height: 60,
-    },
-    position,
-    anchor: {
-      x: 0,
-      y: 0,
-    },
-    origin: {
-      x: 0.5,
-      y: 0.5,
-    },
-  })
+export default class {
+  bird: GameObject
+  birdPhysics: Physics
+  anim: SpriteAnimation
 
-  const anim = bird.addComponent(
-    new SpriteAnimation({
-      resource: 'bird',
-      speed: 100,
-    })
-  )
-
-  const playAnim = () => {
-    anim.resource = 'bird'
-  }
-
-  const birdPhysics = new Physics({
-    type: PhysicsType.RECTANGLE,
-    bodyOptions: {
-      isStatic: false,
-      // restitution: 0,
-      frictionAir: 0.1,
-      friction: 0.06,
-      frictionStatic: 0.3,
-      force: {
+  constructor() {}
+  init(position: BirdPosition) {
+    const bird = new GameObject('bird', {
+      size: {
+        width: 86,
+        height: 60,
+      },
+      position,
+      anchor: {
         x: 0,
         y: 0,
       },
-      // stopRotation: true,
-    },
-  })
-
-  function updateBirdPosition(game: any, pos: BirdPosition) {
-    game.ticker.add(() => {
-      bird.transform.position = { ...pos }
+      origin: {
+        x: 0.5,
+        y: 0.5,
+      },
     })
+
+    const anim = bird.addComponent(
+      new SpriteAnimation({
+        resource: 'bird',
+        speed: 100,
+      })
+    )
+
+    this.bird = bird
+    this.anim = anim
   }
 
-  function jump() {
-    birdPhysics.body.force.y = -0.5
+  setPosition(pos: BirdPosition) {
+    this.bird.transform.position = { ...pos }
   }
 
-  function initBirdPysics() {
-    const physics = bird.addComponent(birdPhysics)
+  jump() {
+    this.birdPhysics.body.force.y = -0.5
+  }
+
+  playAnim() {
+    this.anim.resource = 'bird'
+  }
+
+  initPhysics() {
+    const birdPhysics = new Physics({
+      type: PhysicsType.RECTANGLE,
+      bodyOptions: {
+        isStatic: false,
+        // restitution: 0,
+        frictionAir: 0.1,
+        friction: 0.06,
+        frictionStatic: 0.3,
+        force: {
+          x: 0,
+          y: 0,
+        },
+        // stopRotation: true,
+      },
+    })
+
+    const physics = this.bird.addComponent(birdPhysics)
 
     physics.on('collisionStart', (body: GameObject, body1: GameObject) => {
       console.log(body, body1)
@@ -76,7 +84,7 @@ export default function createBird(position: BirdPosition) {
           break
       }
     })
-  }
 
-  return { bird, playAnim, updateBirdPosition, initBirdPysics, jump }
+    this.birdPhysics = birdPhysics
+  }
 }

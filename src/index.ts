@@ -83,14 +83,14 @@ let birdPosition = {
 }
 
 const background = createBackground(sceneWidth, sceneHeight, game)
-const ready = createReady()
+const ready = createReady(game)
 const gameOver = createGameOver(game)
 const barsInstance = new Bars(sceneWidth, sceneHeight, game)
 const birdInstance = new Bird()
 
 birdInstance.init(initBirdPosition)
 
-const evt = background.addComponent(
+const evt = game.scene.addComponent(
   new Event({
     type: HIT_AREA_TYPE.Rect,
   })
@@ -98,13 +98,17 @@ const evt = background.addComponent(
 
 evt.on('tap', () => {
   if (gameState.over) return
-  if (gameState.playing) {
-    return birdInstance.jump()
+
+  if (gameState.playing && initedBirdPysics) {
+    birdInstance.jump()
   }
-  game.emit('on-game-start')
 })
 
 game.on('on-game-ready', (e) => {
+  gameState.ready = true
+  gameState.over = false
+  gameState.playing = false
+
   birdPosition = {
     ...initBirdPosition,
   }
@@ -122,11 +126,11 @@ game.on('on-game-ready', (e) => {
 game.on('on-game-start', (e) => {
   if (!readyHidden) {
     gameState.ready = false
-    gameState.playing = true
     gameState.over = false
 
     readyHidden = true
     ready.animation.play('hidden', 1)
+
     !initedBirdPysics && birdInstance.initPhysics()
     console.log(birdInstance)
     initedBirdPysics = true
@@ -134,6 +138,8 @@ game.on('on-game-start', (e) => {
     const bars = barsInstance.initBars()
     game.scene.addChild(bars)
     barsInstance.play()
+
+    gameState.playing = true
   }
 })
 

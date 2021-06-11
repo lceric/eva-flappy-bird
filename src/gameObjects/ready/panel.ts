@@ -1,11 +1,11 @@
-import { GameObject } from '@eva/eva.js'
+import { Game, GameObject } from '@eva/eva.js'
 import { Transition } from '@eva/plugin-transition'
 import { Render } from '@eva/plugin-renderer-render'
 import createTitle from './title'
 import createTap from './tap'
 // import createBird from '../bird'
 
-export default function createReady(): {
+export default function createReady(game: Game): {
   readyBox: any
   animation: any
 } {
@@ -18,7 +18,7 @@ export default function createReady(): {
   })
 
   readyBox.addChild(createTitle())
-  readyBox.addChild(createTap())
+  readyBox.addChild(createTap(game))
 
   const animation = readyBox.addComponent(new Transition())
   const render = readyBox.addComponent(

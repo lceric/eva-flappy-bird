@@ -46,7 +46,9 @@ export default class {
   }
 
   jump() {
-    this.birdPhysics.body.force.y = -0.5
+    setTimeout(() => {
+      this.birdPhysics.body.force.y = -0.5
+    }, 16)
   }
 
   playAnim() {

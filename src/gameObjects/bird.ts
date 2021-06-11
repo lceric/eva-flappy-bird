@@ -58,7 +58,7 @@ export default function createBird(position: BirdPosition) {
   }
 
   function jump() {
-    birdPhysics.body.force.y = -0.6
+    birdPhysics.body.force.y = -0.5
   }
 
   function initBirdPysics() {
@@ -66,8 +66,14 @@ export default function createBird(position: BirdPosition) {
 
     physics.on('collisionStart', (body: GameObject, body1: GameObject) => {
       console.log(body, body1)
-      if (body.name == 'ground') {
-        window.game.emit('on-game-over')
+      switch (body.name) {
+        case 'ground':
+        case 'BarFaceTop':
+        case 'BarFaceBottom':
+          window.game.emit('on-game-over')
+          break
+        default:
+          break
       }
     })
   }

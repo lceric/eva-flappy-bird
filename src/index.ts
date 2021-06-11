@@ -2,7 +2,7 @@ import createBackground from './gameObjects/background'
 import createReady from './gameObjects/ready/panel'
 import createBird from './gameObjects/bird'
 import createGameOver from './gameObjects/over/panel'
-import createBars from './gameObjects/bars'
+import Bars from './gameObjects/bars'
 
 import resources from './resources'
 
@@ -82,6 +82,7 @@ const ready = createReady()
 const { bird, updateBirdPosition, initBirdPysics, jump } =
   createBird(initBirdPosition)
 const gameOver = createGameOver(game)
+const barsInstance = new Bars(sceneWidth, sceneHeight, game)
 
 const evt = background.addComponent(
   new Event({
@@ -94,7 +95,6 @@ evt.on('tap', () => {
     return jump()
   }
   gameStart = true
-
   game.emit('on-game-start')
 })
 
@@ -109,7 +109,7 @@ game.on('on-game-ready', (e) => {
 
   readyHidden = false
   ready.animation.play('show', 1)
-
+  barsInstance.destroy()
   console.log('game ready', e)
 })
 
@@ -120,15 +120,16 @@ game.on('on-game-start', (e) => {
     !initedBirdPysics && initBirdPysics()
     initedBirdPysics = true
 
-
-    const bars = createBars(sceneWidth, sceneHeight, game)
+    const bars = barsInstance.initBars()
     game.scene.addChild(bars)
+    barsInstance.play()
   }
 })
 
 game.on('on-game-over', (e) => {
   gameStart = false
   gameOver.animation.play('show', 1)
+  barsInstance.pause()
   console.log('game over', e)
 })
 

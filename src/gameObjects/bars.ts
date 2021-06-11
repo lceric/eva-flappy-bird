@@ -25,52 +25,87 @@ interface ContainerBounds {
   height: number
 }
 
-export default function buildBars(
-  sceneWidth: number,
-  sceneHeight: number,
+export default class {
+  sceneWidth: number
+  sceneHeight: number
   game: Game
-) {
-  const bars = new GameObject('bars', {
-    size: { width: sceneWidth, height: sceneHeight - 280 },
-    position: {
-      x: 0,
-      y: 0,
-    },
-    anchor: {
-      x: 0,
-      y: 0,
-    },
-  })
-  // bars.addComponent(
-  //   new Img({
-  //     resource: 'blue',
-  //   })
-  // )
-  const containerHeight = sceneHeight * 2 - 560
-  const height = (containerHeight - 1000) / 2
-  const container = {
-    width: sceneWidth,
-    height: containerHeight,
+  moving: boolean
+  bars: GameObject
+  currTopBar: GameObject
+  currBottomBar: GameObject
+
+  constructor(sceneWidth: number, sceneHeight: number, game: Game) {
+    this.sceneWidth = sceneWidth
+    this.sceneHeight = sceneHeight
+    this.game = game
   }
 
-  const barAtTop = buildBar('BarFaceTop', 'top', height, container)
-  const barAtBottom = buildBar('BarFaceBottom', 'bottom', height, container)
+  initBars() {
+    const { sceneWidth, sceneHeight } = this
+    const bars = new GameObject('bars', {
+      size: { width: sceneWidth, height: sceneHeight - 280 },
+      position: {
+        x: 0,
+        y: 0,
+      },
+      anchor: {
+        x: 0,
+        y: 0,
+      },
+    })
+    this.bars = bars
+    // bars.addComponent(
+    //   new Img({
+    //     resource: 'blue',
+    //   })
+    // )
+    this.renderBars()
+    return bars
+  }
 
-  const phyTop = barAtTop.getComponent(Physics)
-  const phyBottom = barAtBottom.getComponent(Physics)
-  console.log(phyTop)
-  game.ticker.add((e: any) => {
-    // phyTop.body.velocity.x += 1
-    // phyTop.body.velocity.x -= 1
-    phyTop.body.position.x -= 1
-    barAtTop.transform.position.x -= 1
-    // phyBottom.body.position.x -= 1
-    // barAtBottom.transform.position.x -= 1
-  })
-  bars.addChild(barAtTop)
-  bars.addChild(barAtBottom)
+  pause() {
+    this.moving = false
+  }
 
-  return bars
+  play() {
+    this.moving = true
+  }
+
+  destroy() {
+    this.moving = false
+    this.bars.removeChild(this.currTopBar)
+    this.bars.removeChild(this.currBottomBar)
+  }
+
+  renderBars() {
+    const { sceneWidth, sceneHeight } = this
+    const containerHeight = sceneHeight * 2 - 560
+    const height = (containerHeight - 1000) / 2
+    const container = {
+      width: sceneWidth,
+      height: containerHeight,
+    }
+
+    const barAtTop = barCreator('BarFaceTop', 'top', height, container)
+    const barAtBottom = barCreator('BarFaceBottom', 'bottom', height, container)
+
+    this.currTopBar = barAtTop
+    this.currBottomBar = barAtBottom
+
+    this.game.ticker.add((e: any) => {
+      if (this.moving) {
+        removePhysics(barAtTop)
+        removePhysics(barAtBottom)
+        barAtTop.transform.position.x -= 1
+        barAtBottom.transform.position.x -= 1
+        addPhysics(barAtTop)
+        addPhysics(barAtBottom)
+        console.log(barAtTop.transform.position.x)
+      }
+    })
+    this.bars.addChild(barAtTop)
+    this.bars.addChild(barAtBottom)
+  }
 }
 
 function getRawPosition(
@@ -91,7 +126,7 @@ function getRawPosition(
   return rawPosition[pos]
 }
 
-function buildBar(
+function barCreator(
   name: string,
   pos: BarPosEnum,
   height: number,
@@ -130,23 +165,29 @@ function buildBar(
     })
   )
 
-  bar.addComponent(
+  return bar
+}
+
+function addPhysics(gameObj: GameObject) {
+  gameObj.addComponent(
     new Physics({
       type: PhysicsType.RECTANGLE,
       bodyOptions: {
         isStatic: true,
-        restitution: 0.4,
-        density: 0.002,
-        // restitution: 0.1,
-        // frictionAir: 0,
-        // friction: 0,
-        // frictionStatic: 0,
-        // force: {
-        //   x: 0,
-        //   y: 0,
-        // },
+        frictionAir: 0,
+        friction: 0,
+        frictionStatic: 0,
+        force: {
+          x: 0,
+          y: 0,
+        },
       },
     })
   )
-  return bar
+}
+function removePhysics(gameObj: GameObject) {
+  const p = gameObj.getComponent(Physics)
+  if (p) {
+    gameObj.removeComponent(Physics)
+  }
 }

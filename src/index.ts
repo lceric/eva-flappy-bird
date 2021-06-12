@@ -124,7 +124,7 @@ game.on('on-game-ready', (e) => {
 
   readyHidden = false
   ready.animation.play('show', 1)
-  console.log('game ready')
+  // console.log('game ready')
 
   const pipes = game.scene.gameObjects.filter((itm) => itm._name == 'pipe')
   pipes.forEach((pipe) => {
@@ -169,7 +169,7 @@ game.on('on-game-over', (e) => {
   game.playing = false
   updateScore(game, store.score)
   
-  console.log('game over', e)
+  // console.log('game over')
   game.pause()
 })
 

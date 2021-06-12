@@ -74,11 +74,8 @@ export default class {
     const physics = this.bird.addComponent(birdPhysics)
 
     physics.on('collisionStart', (body: GameObject, body1: GameObject) => {
-      console.log(body, body1)
       switch (body.name) {
         case 'ground':
-        case 'BarFaceTop':
-        case 'BarFaceBottom':
         case 'pipe':
           window.game.emit('on-game-over')
           break

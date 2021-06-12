@@ -4,6 +4,7 @@ import { Render } from '@eva/plugin-renderer-render'
 import createTitle from './title'
 import createTap from './tap'
 // import createBird from '../bird'
+import { sceneHeight } from '../../helper/const'
 
 export default function createReady(game: Game): {
   readyBox: any
@@ -13,7 +14,7 @@ export default function createReady(game: Game): {
     size: { width: 320, height: 80 },
     position: {
       x: 128,
-      y: 360,
+      y: sceneHeight / 4,
     },
   })
 

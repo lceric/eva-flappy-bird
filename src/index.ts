@@ -7,9 +7,9 @@ import createScore from './gameObjects/score'
 
 import resources from './resources'
 import store from './helper/store'
-import {  sceneWidth, sceneHeight } from './helper/const'
+import { sceneWidth, sceneHeight, birdInitialPosition } from './helper/const'
 
-import { Game, resource } from '@eva/eva.js'
+import { Game, resource, LOAD_SCENE_MODE, Scene } from '@eva/eva.js'
 import { RendererSystem } from '@eva/plugin-renderer'
 import { ImgSystem } from '@eva/plugin-renderer-img'
 import { Event, EventSystem, HIT_AREA_TYPE } from '@eva/plugin-renderer-event'
@@ -62,8 +62,11 @@ const game = new Game({
   ],
 })
 
-game.scene.transform.size.width = sceneWidth
-game.scene.transform.size.height = sceneHeight
+// game.scene.transform.size.width = sceneWidth
+// game.scene.transform.size.height = sceneHeight
+
+// canvasEl.style.width = sceneWidth / 2 + 'px'
+// canvasEl.style.height = sceneHeight / 2 + 'px'
 
 const gameState = {
   ready: true,
@@ -73,21 +76,18 @@ const gameState = {
 
 let readyHidden = false
 let initedBirdPysics = false
-let initBirdPosition = {
-  x: 100,
-  y: 660,
-}
+
 let birdPosition = {
-  ...initBirdPosition,
+  ...birdInitialPosition,
 }
 
-const background = createBackground(sceneWidth, sceneHeight, game)
+const background = createBackground(game)
 const ready = createReady(game)
 const gameOver = createGameOver(game)
 // const barsInstance = new Bars(sceneWidth, sceneHeight, game)
 const birdInstance = new Bird()
 
-birdInstance.init(initBirdPosition)
+birdInstance.init(birdInitialPosition)
 
 const evt = game.scene.addComponent(
   new Event({
@@ -109,7 +109,7 @@ game.on('on-game-ready', (e) => {
   gameState.playing = false
 
   birdPosition = {
-    ...initBirdPosition,
+    ...birdInitialPosition,
   }
   birdInstance.setPosition(birdPosition)
 
@@ -168,7 +168,7 @@ game.on('on-game-over', (e) => {
   game.started = false
   game.playing = false
   updateScore(game, store.score)
-  
+
   // console.log('game over')
   game.pause()
 })
@@ -183,9 +183,8 @@ function initGameScene(game: Game) {
   game.scene.addChild(createScore())
 
   game.scene.addComponent(
-  new Render({
-    sortableChildren: true,
-  }),
-);
-
+    new Render({
+      sortableChildren: true,
+    })
+  )
 }

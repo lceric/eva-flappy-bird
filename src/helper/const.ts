@@ -1,7 +1,14 @@
 
 export const sceneWidth = 750
 
-export const sceneHeight = 750 * (window.innerHeight / window.innerWidth)
+export const sceneHeight = window.innerHeight / window.innerWidth * 750
+
+export const groundHeight = sceneHeight / 4
+
+export const birdInitialPosition = {
+  x: 100,
+  y: sceneHeight / 2,
+}
 
 export const scoreTextStyles = {
   fontFamily: 'Arial',

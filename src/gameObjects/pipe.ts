@@ -8,7 +8,7 @@ import Move from '../components/Move'
 import GameComponent from '../components/Game'
 
 import { Distance } from '../types/index'
-import { sceneWidth, sceneHeight } from '../helper/const'
+import { sceneWidth, sceneHeight, groundHeight } from '../helper/const'
 
 const spriteName: PipeSprite = {
   bottom: 'bar.png',
@@ -117,14 +117,14 @@ export function createPipe(
 }
 
 export function genPipeGroupSize() {
-  const containerHeight = sceneHeight * 2 - 560
+  const containerHeight = sceneHeight * 2 - groundHeight * 2
   const containerWidth = sceneWidth
   const container = {
     width: sceneWidth,
     height: containerHeight,
   }
 
-  const offsetHeight = Math.random() * 520
+  const offsetHeight = Math.random() * sceneHeight / 5
   const height = (containerHeight - 1000 - offsetHeight) / 2
 
   const restHeight = (containerHeight - 1000) / 2

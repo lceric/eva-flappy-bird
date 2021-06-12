@@ -5,7 +5,7 @@ import createTitle from './title'
 import createPlay from './play'
 import { Text } from '@eva/plugin-renderer-text'
 
-import { scoreTextStyles } from '../../helper/const'
+import { sceneHeight, scoreTextStyles } from '../../helper/const'
 import store from '../../helper/store'
 
 export default function createGameOver(game: Game): {
@@ -16,7 +16,7 @@ export default function createGameOver(game: Game): {
     size: { width: 320, height: 80 },
     position: {
       x: 128,
-      y: 360,
+      y: sceneHeight / 3,
     },
   })
 

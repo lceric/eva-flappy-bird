@@ -7,6 +7,7 @@ import createScore from './gameObjects/score'
 
 import resources from './resources'
 import store from './helper/store'
+import {  sceneWidth, sceneHeight } from './helper/const'
 
 import { Game, resource } from '@eva/eva.js'
 import { RendererSystem } from '@eva/plugin-renderer'
@@ -20,13 +21,11 @@ import { TextSystem, Text } from '@eva/plugin-renderer-text'
 import { SpriteSystem } from '@eva/plugin-renderer-sprite'
 import { TilingSpriteSystem } from '@eva/plugin-renderer-tiling-sprite'
 import { PhysicsSystem } from '@eva/plugin-matterjs'
+import { updateScore } from './helper/update'
 
 resource.addResource(resources)
 
 const canvasEl: HTMLElement = document.querySelector('#canvas')
-const sceneWidth = 750
-const sceneHeight = 750 * (window.innerHeight / window.innerWidth)
-// (canvasHeight / canvasWidth) * 750
 
 const game = new Game({
   frameRate: 70, // 兼容Eva自身bug, 帧率必须大于60
@@ -125,9 +124,8 @@ game.on('on-game-ready', (e) => {
 
   readyHidden = false
   ready.animation.play('show', 1)
-  console.log('game ready', e)
+  console.log('game ready')
 
-  console.log(game.scene)
   const pipes = game.scene.gameObjects.filter((itm) => itm._name == 'pipe')
   pipes.forEach((pipe) => {
     game.scene.removeChild(pipe)
@@ -136,10 +134,7 @@ game.on('on-game-ready', (e) => {
 
   store.pipePassedCount = 0
   store.score = 0
-
-  const score = game.scene.gameObjects.find((itm) => itm._name == 'score')
-  const text = score.getComponent(Text)
-  text.text = '得分：0'
+  updateScore(game, store.score)
 })
 
 game.on('on-game-start', (e) => {
@@ -152,7 +147,6 @@ game.on('on-game-start', (e) => {
     ready.animation.play('hidden', 1)
 
     !initedBirdPysics && birdInstance.initPhysics()
-    console.log(birdInstance)
     initedBirdPysics = true
 
     const [top, bottom] = createPipeGroup()
@@ -171,9 +165,11 @@ game.on('on-game-over', (e) => {
   gameOver.animation.play('show', 1)
 
   game.scene.addChild(gameOver.gameOver)
-  console.log('game over', e)
   game.started = false
   game.playing = false
+  updateScore(game, store.score)
+  
+  console.log('game over', e)
   game.pause()
 })
 

@@ -4,8 +4,9 @@ import { Text } from '@eva/plugin-renderer-text'
 import { Physics } from '@eva/plugin-matterjs'
 import GameComponent from './Game'
 import store from '../helper/store'
+import { sceneWidth } from '../helper/const'
 
-type Distance = 'top' | 'bottom'
+import { Distance } from '../types/index'
 
 export default class Enemy extends GameComponent {
   gameObject: GameObject
@@ -23,8 +24,6 @@ export default class Enemy extends GameComponent {
   }
 
   update() {
-    const sceneWidth = 750
-
     const physics = this.gameObject.getComponent(Physics)
 
     const scene: Scene = this.gameObject.scene
@@ -36,7 +35,7 @@ export default class Enemy extends GameComponent {
     if (!physics) return
     const x = physics.body && physics.body.position.x
 
-    if (x <= -80 - 20) {
+    if (x <= -66) {
       store.pipePassedCount++
 
       this.gameObject.getComponent(Physics).removeAllListeners()
@@ -46,10 +45,8 @@ export default class Enemy extends GameComponent {
 
     if (!this.appended && x < (sceneWidth * 2) / 3) {
       this.appended = true
-      console.log('this.distance', this.distance)
 
       const pipe: GameObject = nextPipe()
-
       this.gameObject.scene.addChild(pipe)
     }
   }

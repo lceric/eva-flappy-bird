@@ -1,20 +1,13 @@
-import { Game, GameObject } from '@eva/eva.js'
+import { GameObject } from '@eva/eva.js'
 import { Physics, PhysicsType } from '@eva/plugin-matterjs'
-import { Img } from '@eva/plugin-renderer-img'
 import { Sprite } from '@eva/plugin-renderer-sprite'
-import Matter from 'matter-js'
 
 import Enemy from '../components/Enemy'
 import Move from '../components/Move'
 import GameComponent from '../components/Game'
 
-const sceneWidth = 750
-const sceneHeight = 750 * (window.innerHeight / window.innerWidth)
-
-interface BarSprite {
-  top: string
-  bottom: string
-}
+import { Distance } from '../types/index'
+import { sceneWidth, sceneHeight } from '../helper/const'
 
 const spriteName: PipeSprite = {
   bottom: 'bar.png',
@@ -60,17 +53,8 @@ export function createPipe(
   height: number,
   containerWidth: number,
   y: number,
-  distance: string
+  distance: Distance
 ) {
-  // const containerHeight = sceneHeight * 2 - 560
-  // const container = {
-  //   width: sceneWidth,
-  //   height: containerHeight,
-  // }
-
-  // const offsetHeight = Math.random() * 330
-  // const height = (containerHeight - 1000 - offsetHeight) / 2
-  console.log(arguments)
   const pipe = new GameObject('pipe', {
     size: { width: 80, height: height },
     position: {
@@ -113,12 +97,11 @@ export function createPipe(
   })
   const pipePhysics = pipe.addComponent(physics)
 
-  pipePhysics.on('collisionStart', (body, gameObject1, gameObject2) => {
-    console.log(body, gameObject1)
-  })
+  // pipePhysics.on('collisionStart', (body, gameObject1, gameObject2) => {
+  //   console.log(body, gameObject1)
+  // })
 
   const gameComponent: GameComponent = new GameComponent()
-  console.log(gameComponent)
 
   pipe.addComponent(new Enemy(distance))
   pipe.addComponent(new Move())
@@ -135,7 +118,7 @@ export function genPipeGroupSize() {
     height: containerHeight,
   }
 
-  const offsetHeight = Math.random() * 180 + 180
+  const offsetHeight = Math.random() * 520
   const height = (containerHeight - 1000 - offsetHeight) / 2
 
   const restHeight = (containerHeight - 1000) / 2

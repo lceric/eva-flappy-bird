@@ -14,7 +14,7 @@ import { RendererSystem } from '@eva/plugin-renderer'
 import { ImgSystem } from '@eva/plugin-renderer-img'
 import { Event, EventSystem, HIT_AREA_TYPE } from '@eva/plugin-renderer-event'
 import { SpriteAnimationSystem } from '@eva/plugin-renderer-sprite-animation'
-import { RenderSystem } from '@eva/plugin-renderer-render'
+import { RenderSystem, Render } from '@eva/plugin-renderer-render'
 import { TransitionSystem } from '@eva/plugin-transition'
 import { GraphicsSystem } from '@eva/plugin-renderer-graphics'
 import { TextSystem, Text } from '@eva/plugin-renderer-text'
@@ -181,4 +181,11 @@ function initGameScene(game: Game) {
   game.scene.addChild(birdInstance.bird)
   game.scene.addChild(ready.readyBox)
   game.scene.addChild(createScore())
+
+  game.scene.addComponent(
+  new Render({
+    sortableChildren: true,
+  }),
+);
+
 }

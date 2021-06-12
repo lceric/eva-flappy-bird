@@ -1,6 +1,7 @@
 import { GameObject } from '@eva/eva.js'
 import { Physics, PhysicsType } from '@eva/plugin-matterjs'
 import { Sprite } from '@eva/plugin-renderer-sprite'
+import { Render } from '@eva/plugin-renderer-render'
 
 import Enemy from '../components/Enemy'
 import Move from '../components/Move'
@@ -106,6 +107,11 @@ export function createPipe(
   pipe.addComponent(new Enemy(distance))
   pipe.addComponent(new Move())
   pipe.addComponent(gameComponent)
+  pipe.addComponent(
+    new Render({
+      zIndex: 8,
+    })
+  )
 
   return pipe
 }

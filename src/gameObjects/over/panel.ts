@@ -45,6 +45,7 @@ export default function createGameOver(game: Game): {
   const render = gameOver.addComponent(
     new Render({
       alpha: 1,
+      zIndex: 10
     })
   )
 

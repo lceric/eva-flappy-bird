@@ -2,6 +2,7 @@ import { Game, GameObject } from '@eva/eva.js'
 import { Physics, PhysicsType } from '@eva/plugin-matterjs'
 import { Img } from '@eva/plugin-renderer-img'
 import { TilingSprite } from '@eva/plugin-renderer-tiling-sprite'
+import { Render } from '@eva/plugin-renderer-render'
 
 export default function createBackground(
   sceneWidth: number,
@@ -62,6 +63,10 @@ export default function createBackground(
   game.ticker.add(() => {
     groundTilingSprite.tilePosition.x -= 1
   })
+
+  bg.addComponent(new Render({
+    zIndex: 0
+  }))
 
   return bg
 }

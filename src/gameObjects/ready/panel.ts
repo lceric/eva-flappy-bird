@@ -24,6 +24,7 @@ export default function createReady(game: Game): {
   const render = readyBox.addComponent(
     new Render({
       alpha: 1,
+      zIndex: 8,
     })
   )
 

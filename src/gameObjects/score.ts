@@ -1,5 +1,6 @@
 import { GameObject } from '@eva/eva.js'
 import { Text } from '@eva/plugin-renderer-text'
+import { Render } from '@eva/plugin-renderer-render'
 
 export default function createScore(text?: string) {
   const score = new GameObject('score', {
@@ -36,6 +37,11 @@ export default function createScore(text?: string) {
       },
     })
   )
-
+  
+  score.addComponent(
+    new Render({
+      zIndex: 10,
+    })
+  )
   return score
 }

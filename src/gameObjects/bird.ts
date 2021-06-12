@@ -1,6 +1,7 @@
 import { GameObject } from '@eva/eva.js'
 import { SpriteAnimation } from '@eva/plugin-renderer-sprite-animation'
 import { Physics, PhysicsType } from '@eva/plugin-matterjs'
+import { Render } from '@eva/plugin-renderer-render'
 import Jump from '../components/Jump'
 
 interface BirdPosition {
@@ -85,5 +86,11 @@ export default class {
     })
     this.bird.addComponent(new Jump())
     this.birdPhysics = birdPhysics
+
+
+    this.bird.addComponent(new Render({
+      zIndex: 10
+    }))
+
   }
 }

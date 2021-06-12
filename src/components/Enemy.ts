@@ -64,7 +64,7 @@ export default class Enemy extends GameComponent {
     if (store.pipePassedCount % 2 == 0) {
       store.score = store.pipePassedCount / 2
 
-      text.text = String(store.score)
+      text.text = `得分：${String(store.score)}`
     }
   }
 }

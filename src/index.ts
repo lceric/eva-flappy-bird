@@ -6,6 +6,7 @@ import createPipeGroup from './gameObjects/pipe'
 import createScore from './gameObjects/score'
 
 import resources from './resources'
+import store from './helper/store'
 
 import { Game, resource } from '@eva/eva.js'
 import { RendererSystem } from '@eva/plugin-renderer'
@@ -15,7 +16,7 @@ import { SpriteAnimationSystem } from '@eva/plugin-renderer-sprite-animation'
 import { RenderSystem } from '@eva/plugin-renderer-render'
 import { TransitionSystem } from '@eva/plugin-transition'
 import { GraphicsSystem } from '@eva/plugin-renderer-graphics'
-import { TextSystem } from '@eva/plugin-renderer-text'
+import { TextSystem, Text } from '@eva/plugin-renderer-text'
 import { SpriteSystem } from '@eva/plugin-renderer-sprite'
 import { TilingSpriteSystem } from '@eva/plugin-renderer-tiling-sprite'
 import { PhysicsSystem } from '@eva/plugin-matterjs'
@@ -132,6 +133,13 @@ game.on('on-game-ready', (e) => {
     game.scene.removeChild(pipe)
     pipe.destroy()
   })
+
+  store.pipePassedCount = 0
+  store.score = 0
+
+  const score = game.scene.gameObjects.find((itm) => itm._name == 'score')
+  const text = score.getComponent(Text)
+  text.text = '得分：0'
 })
 
 game.on('on-game-start', (e) => {
@@ -176,5 +184,5 @@ function initGameScene(game: Game) {
   game.scene.addChild(background)
   game.scene.addChild(birdInstance.bird)
   game.scene.addChild(ready.readyBox)
-  game.scene.addChild(createScore('0'))
+  game.scene.addChild(createScore())
 }

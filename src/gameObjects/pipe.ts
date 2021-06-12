@@ -135,7 +135,7 @@ export function genPipeGroupSize() {
     height: containerHeight,
   }
 
-  const offsetHeight = Math.random() * 330 + 330
+  const offsetHeight = Math.random() * 180 + 180
   const height = (containerHeight - 1000 - offsetHeight) / 2
 
   const restHeight = (containerHeight - 1000) / 2

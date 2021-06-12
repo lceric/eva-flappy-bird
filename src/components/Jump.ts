@@ -13,7 +13,7 @@ export default class Jump extends Component {
     const physics: Physics = this.gameObject.getComponent(Physics)
 
     if (physics.body) {
-      physics.body.force.y = -0.5
+      physics.body.force.y = -0.62
     }
   }
 }

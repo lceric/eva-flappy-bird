@@ -2,7 +2,8 @@ import createBackground from './gameObjects/background'
 import createReady from './gameObjects/ready/panel'
 import Bird from './gameObjects/bird'
 import createGameOver from './gameObjects/over/panel'
-import Bars from './gameObjects/bars'
+import createPipeGroup from './gameObjects/pipe'
+import createScore from './gameObjects/score'
 
 import resources from './resources'
 
@@ -22,8 +23,6 @@ import { PhysicsSystem } from '@eva/plugin-matterjs'
 resource.addResource(resources)
 
 const canvasEl: HTMLElement = document.querySelector('#canvas')
-const canvasWidth = canvasEl.offsetWidth
-const canvasHeight = canvasEl.offsetHeight
 const sceneWidth = 750
 const sceneHeight = 750 * (window.innerHeight / window.innerWidth)
 // (canvasHeight / canvasWidth) * 750
@@ -85,7 +84,7 @@ let birdPosition = {
 const background = createBackground(sceneWidth, sceneHeight, game)
 const ready = createReady(game)
 const gameOver = createGameOver(game)
-const barsInstance = new Bars(sceneWidth, sceneHeight, game)
+// const barsInstance = new Bars(sceneWidth, sceneHeight, game)
 const birdInstance = new Bird()
 
 birdInstance.init(initBirdPosition)
@@ -117,18 +116,27 @@ game.on('on-game-ready', (e) => {
   if (initedBirdPysics) {
     birdInstance.bird.removeComponent(birdInstance.birdPhysics)
     initedBirdPysics = false
+    game.scene.removeChild(gameOver.gameOver)
+    // barsInstance.destroy()
   }
 
   gameOver.animation.play('hidden', 1)
 
   readyHidden = false
   ready.animation.play('show', 1)
-  barsInstance.destroy()
   console.log('game ready', e)
+
+  console.log(game.scene)
+  const pipes = game.scene.gameObjects.filter((itm) => itm._name == 'pipe')
+  pipes.forEach((pipe) => {
+    game.scene.removeChild(pipe)
+    pipe.destroy()
+  })
 })
 
 game.on('on-game-start', (e) => {
   if (!readyHidden) {
+    game.start()
     gameState.ready = false
     gameState.over = false
 
@@ -139,9 +147,9 @@ game.on('on-game-start', (e) => {
     console.log(birdInstance)
     initedBirdPysics = true
 
-    barsInstance.init()
-    game.scene.addChild(barsInstance.bars)
-    barsInstance.play()
+    const [top, bottom] = createPipeGroup()
+    game.scene.addChild(top)
+    game.scene.addChild(bottom)
 
     gameState.playing = true
   }
@@ -153,9 +161,12 @@ game.on('on-game-over', (e) => {
   gameState.over = true
 
   gameOver.animation.play('show', 1)
-  barsInstance.pause()
 
+  game.scene.addChild(gameOver.gameOver)
   console.log('game over', e)
+  game.started = false
+  game.playing = false
+  game.pause()
 })
 
 initGameScene(game)
@@ -165,7 +176,5 @@ function initGameScene(game: Game) {
   game.scene.addChild(background)
   game.scene.addChild(birdInstance.bird)
   game.scene.addChild(ready.readyBox)
-  game.scene.addChild(gameOver.gameOver)
-  // const bars = createBars(sceneWidth, sceneHeight, game)
-  // game.scene.addChild(bars)
+  game.scene.addChild(createScore('0'))
 }
